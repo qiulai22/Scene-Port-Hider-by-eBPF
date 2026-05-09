@@ -1,0 +1,8 @@
+#!/system/bin/sh
+case "$1" in
+    "ro.boot.verifiedbootstate") echo "green" ;;
+    "ro.boot.flash.locked") echo "1" ;;
+    "ro.boot.vbmeta.device_state") echo "locked" ;;
+    "ro.is_ever_orange") echo "0" ;;
+    *) /system/bin/toybox getprop "$@" ;;
+esac

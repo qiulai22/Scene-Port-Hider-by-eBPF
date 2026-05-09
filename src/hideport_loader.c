@@ -241,7 +241,6 @@ int main(int argc, char **argv)
     struct config cfg;
     struct hideport_bpf *skel = NULL;
     struct bpf_link *link = NULL;
-    struct bpf_link *lsm_link = NULL;
     int err;
 
     err = parse_args(argc, argv, &cfg);
@@ -298,12 +297,7 @@ int main(int argc, char **argv)
         goto cleanup;
     }
 
-    lsm_link = bpf_program__attach(skel->progs.restrict_luna_fork);
-    if (!lsm_link) {
-        fprintf(stderr, "failed to attach restrict_luna_fork LSM hook\n");
-    } else {
-        fprintf(stderr, "LSM hook for Luna fork attached\n");
-    }
+
     fprintf(stderr, "hideport loaded\n");
     while (!exiting)
         sleep(1);
@@ -311,7 +305,6 @@ int main(int argc, char **argv)
     err = 0;
 
 cleanup:
-        if (lsm_link) bpf_link__destroy(lsm_link);
     bpf_link__destroy(link);
     hideport_bpf__destroy(skel);
     return err;
