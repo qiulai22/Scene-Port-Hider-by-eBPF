@@ -16,6 +16,18 @@
 com.omarea.vtools
 ```
 
+## 更新内容
+
+### v2.0
+
+- 改为纯 eBPF/cgroup socket hook 方案，不再写入 `iptables` / `ip6tables` 规则，也不再依赖 `service.d` 脚本。
+- 新增 `cgroup/connect4`、`cgroup/connect6` 处理连接型探测，将非白名单应用对隐藏端口的本机连接重定向到无服务端口。
+- 新增 `cgroup/bind4`、`cgroup/bind6` 处理 bind 型探测，将非白名单应用对隐藏端口的本机绑定临时改为随机端口。
+- 新增 `bind + getsockname()` 一致性处理，避免检测器通过 `bind()` 后读取实际端口发现改写痕迹。
+- 新增 `close()` 清理逻辑，按 `tgid + fd` 清除临时记录，降低长时间运行后的状态残留风险。
+- 优化 Scene UID 白名单解析，等待包管理器或运行进程提供真实 UID，避免开机早期误判 UID 导致 Scene 自身无法连接 daemon。
+- 新增安装时 BTF 指纹校验，模块包内 `btf/vmlinux.btf` 必须和当前设备 `/sys/kernel/btf/vmlinux` 一致，降低刷错设备包的风险。
+
 ## Root 方案兼容性
 
 模块采用通用 Magisk 模块结构，理论兼容：
